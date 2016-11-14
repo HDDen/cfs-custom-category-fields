@@ -228,7 +228,7 @@ class CfsTaxonomy
 
     public static function loadJs($context)
     {
-        if ('edit-tags.php' === $context && isset($_GET['action']) && 'edit' === $_GET['action']) {
+        if ('term.php' === $context && !empty($_GET['taxonomy']) && !empty($_GET['tag_ID'])) {
             wp_enqueue_script('post');
             wp_enqueue_style(self::ID, plugins_url('css/admin.css', __FILE__));
             //hook the edit forms for category and other custom hierarchical taxonomies
