@@ -65,6 +65,16 @@ class CfsTaxonomy
         add_filter('cfs_matching_groups', 'CfsTaxonomy::matchingGroups');
         CFS()->group_ids = $groups;//the form api checks this for backend groups
         $metabox = array( 'args' => array( 'group_id' => $groups ) );
+        $fields_ids = get_post_meta($groups[0],'cfs_fields');
+        foreach($fields_ids[0] as $field)
+        {
+          if($field['type'] == 'wysiwyg')
+          {
+            echo '<div class="hidden">';
+            wp_editor($field['options']['default_value'],$field['name']);
+            echo '</div>';
+          }
+        }
         include( CFS_DIR . '/templates/meta_box_input.php' );
         //@depricated in newer versions
         //CFS()->meta_box($post, array('args' => $args));
