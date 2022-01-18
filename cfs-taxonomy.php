@@ -46,8 +46,10 @@ class CfsTaxonomy
             return;
         }
         add_filter('postbox_classes_' . self::ID . '_tagsdiv-post_tag', 'CfsTaxonomy::postBoxClasses');
-        add_meta_box('tagsdiv-post_tag', current(self::$fieldGroup), 'CfsTaxonomy::showMetaBox', self::ID, 'side', 'core');
         echo '<tr class="form-field"><th valign="top" scope="row">Custom Fields</th><td><div id="poststuff" class="metabox-holder" style="min-width:0;padding-top:0">';
+        foreach(self::$fieldGroup as $group){
+            add_meta_box('tagsdiv-post_tag', $group, 'CfsTaxonomy::showMetaBox', self::ID, 'side', 'core');
+        }
         $meta_boxes = do_meta_boxes(self::ID, 'side', 'rabbit');
         echo '</div></td></tr>';
     }
@@ -205,7 +207,7 @@ class CfsTaxonomy
 
     public static function matchGroups($taxonomy)
     {
-        $posts = get_posts(array('post_type' => 'cfs', 'post_status' => 'publish', 'posts_per_page' => 1, //'fields' => 'ids',
+        $posts = get_posts(array('post_type' => 'cfs', 'post_status' => 'publish', 'posts_per_page' => -1, //'fields' => 'ids',
             'tax_query' => array(
                 array(
                     'taxonomy' => 'cfs_taxonomy',
@@ -214,7 +216,16 @@ class CfsTaxonomy
                 )
             )
         ));
-        return empty($posts) ? false : array($posts[0]->ID => $posts[0]->post_title);//need the title for the menu
+
+        $return_arr = array();
+        if (!empty($posts)){
+            foreach ($posts as $post_entity){
+                $return_arr[$post_entity->ID] = $post_entity->post_title;
+            }
+        }
+
+        return empty($return_arr) ? false : $return_arr;
+        //return empty($posts) ? false : array($posts[0]->ID => $posts[0]->post_title);//need the title for the menu
     }
 
     public static function adminInit()
